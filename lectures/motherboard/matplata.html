@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Материнская плата: как это работает</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+            background: #0b0f1a;
+            color: #e8edf5;
+            line-height: 1.65;
+            padding: 2rem 1rem;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        h1, h2, h3 { font-weight: 600; letter-spacing: -0.02em; }
+        h1 {
+            font-size: 2.4rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #7aa2f7, #bb9af7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .subhead {
+            color: #9aa9c4;
+            margin-bottom: 3rem;
+            font-size: 1.1rem;
+            border-left: 4px solid #7aa2f7;
+            padding-left: 1.2rem;
+        }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+        .card {
+            background: #151e2f;
+            border-radius: 20px;
+            padding: 1.8rem;
+            border: 1px solid #2a3650;
+            box-shadow: 0 10px 25px -10px rgba(0,0,0,0.6);
+            transition: transform 0.2s ease, border-color 0.2s;
+        }
+        .card:hover { border-color: #4a6fa5; transform: translateY(-3px); }
+        .card h2 {
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+            color: #a8c7fa;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+        .component-list { list-style: none; }
+        .component-list li {
+            padding: 0.9rem 0;
+            border-bottom: 1px solid #1f2a3f;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        .component-list li:last-child { border-bottom: none; }
+        .thumb {
+            flex-shrink: 0;
+            width: 76px;
+            height: 76px;
+            border-radius: 14px;
+            background: #0e1624;
+            border: 1px solid #2a3a58;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .thumb svg { width: 100%; height: 100%; display: block; }
+        .component-list strong { color: #c0d0f0; display: block; margin-bottom: 0.15rem; }
+        .component-list .desc { color: #9aa9c4; font-size: 0.9rem; }
+        .connector-section {
+            background: #111a28;
+            border-radius: 24px;
+            padding: 2rem 1.8rem;
+            margin-bottom: 2.5rem;
+            border: 1px solid #1e2d45;
+        }
+        .connector-section h2 { font-size: 1.6rem; margin-bottom: 0.5rem; color: #7aa2f7; }
+        .connector-section > p { color: #9aa9c4; margin-bottom: 1.5rem; }
+        .connector-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+        .connector-item {
+            background: #1a253b;
+            border-radius: 14px;
+            padding: 1rem 1.1rem;
+            border-left: 4px solid #3d5a8a;
+            display: flex;
+            gap: 0.9rem;
+            align-items: center;
+        }
+        .connector-item .thumb { width: 62px; height: 62px; border-radius: 10px; }
+        .connector-item .name { font-weight: 600; color: #c8d9ff; margin-bottom: 0.2rem; font-size: 0.95rem; }
+        .connector-item .purpose { font-size: 0.83rem; color: #98a9c7; }
+        .chipset-table { width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: 0.92rem; }
+        .chipset-table th {
+            text-align: left;
+            padding: 0.9rem 0.8rem;
+            background: #1b2a44;
+            color: #b8ceff;
+            font-weight: 600;
+        }
+        .chipset-table td { padding: 0.8rem; border-bottom: 1px solid #1f2f4a; }
+        .chipset-table tr:last-child td { border-bottom: none; }
+        .chipset-table .series { font-weight: 700; color: #ffd966; }
+        .note {
+            background: #16202e;
+            border-radius: 12px;
+            padding: 1.2rem 1.5rem;
+            margin-top: 1.5rem;
+            color: #a6b8d9;
+            font-size: 0.95rem;
+            border-left: 6px solid #7aa2f7;
+        }
+
+        /* ДЕТАЛЬНЫЙ РАЗДЕЛ ПРО РАБОТУ */
+        .deep-section {
+            background: #0f1726;
+            border-radius: 24px;
+            padding: 2.2rem 1.8rem;
+            margin-bottom: 3rem;
+            border: 1px solid #1e2d45;
+        }
+        .deep-section h2 {
+            font-size: 1.7rem;
+            color: #7aa2f7;
+            margin-bottom: 0.4rem;
+        }
+        .deep-section > p.lead {
+            color: #9aa9c4;
+            margin-bottom: 1.8rem;
+        }
+        .stage {
+            background: #141e30;
+            border-radius: 16px;
+            padding: 1.4rem 1.5rem;
+            margin-bottom: 1.2rem;
+            border-left: 5px solid #3d5a8a;
+        }
+        .stage h3 {
+            color: #b8ceff;
+            font-size: 1.15rem;
+            margin-bottom: 0.6rem;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+        }
+        .stage .num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #2a3f6a;
+            color: #ffd966;
+            font-weight: 700;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+        .stage p { color: #b7c4dc; margin-bottom: 0.7rem; font-size: 0.95rem; }
+        .stage p:last-child { margin-bottom: 0; }
+        .stage ul { margin: 0.5rem 0 0.7rem 1.2rem; color: #a8b8d8; font-size: 0.93rem; }
+        .stage li { margin-bottom: 0.35rem; }
+        .stage code {
+            background: #1b2a44;
+            color: #ffd966;
+            padding: 0.1rem 0.45rem;
+            border-radius: 5px;
+            font-size: 0.85rem;
+            font-family: 'Consolas', monospace;
+        }
+        .tech-term { color: #7aa2f7; font-weight: 600; }
+
+        /* SMART-РАЗДЕЛ */
+        .smart-section {
+            background: linear-gradient(160deg, #101a2c 0%, #0d1420 100%);
+            border-radius: 24px;
+            padding: 2.2rem 1.8rem;
+            margin-bottom: 2.5rem;
+            border: 1px solid #24365a;
+        }
+        .smart-section h2 {
+            font-size: 1.7rem;
+            color: #bb9af7;
+            margin-bottom: 0.4rem;
+        }
+        .smart-section > p.lead { color: #9aa9c4; margin-bottom: 1.8rem; }
+        .smart-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 1.3rem;
+        }
+        .smart-card {
+            background: #151e2f;
+            border-radius: 18px;
+            padding: 1.3rem;
+            border: 1px solid #2a3650;
+            transition: border-color 0.2s, transform 0.2s;
+        }
+        .smart-card:hover { border-color: #7a5aaf; transform: translateY(-3px); }
+        .smart-card .smart-head {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            margin-bottom: 0.9rem;
+        }
+        .smart-card .smart-head .thumb {
+            width: 64px;
+            height: 64px;
+            border-radius: 12px;
+            border-color: #3a2e5c;
+        }
+        .smart-card .smart-head .title {
+            font-weight: 600;
+            color: #d4c4f5;
+            font-size: 1.02rem;
+        }
+        .smart-card .smart-head .subtitle {
+            font-size: 0.78rem;
+            color: #8a7ab5;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .smart-card p {
+            color: #a8b8d8;
+            font-size: 0.9rem;
+            margin-bottom: 0.7rem;
+        }
+        .smart-card .example {
+            background: #0d1420;
+            border-radius: 10px;
+            padding: 0.8rem 1rem;
+            font-size: 0.85rem;
+            color: #9fb0d0;
+            border-left: 3px solid #7aa2f7;
+        }
+        .smart-card .example strong { color: #ffd966; }
+        .smart-card .example code {
+            color: #7aa2f7;
+            font-family: 'Consolas', monospace;
+            font-size: 0.83rem;
+        }
+
+        /* НОВЫЙ РАЗДЕЛ: ФОРМ-ФАКТОРЫ, РАЗЪЁМЫ, СОВМЕСТИМОСТЬ */
+        .compat-section {
+            background: #0f1726;
+            border-radius: 24px;
+            padding: 2.2rem 1.8rem;
+            margin-bottom: 3rem;
+            border: 1px solid #1e2d45;
+        }
+        .compat-section h2 {
+            font-size: 1.7rem;
+            color: #7aa2f7;
+            margin-bottom: 0.4rem;
+        }
+        .compat-section > p.lead {
+            color: #9aa9c4;
+            margin-bottom: 2rem;
+        }
+        .compat-section h3 {
+            font-size: 1.25rem;
+            color: #bb9af7;
+            margin: 2.2rem 0 1rem;
+            padding-bottom: 0.4rem;
+            border-bottom: 1px solid #24365a;
+        }
+        .compat-section h3:first-of-type { margin-top: 0; }
+        .compat-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            margin: 1rem 0 1.5rem;
+        }
+        .compat-table th {
+            text-align: left;
+            padding: 0.8rem 0.7rem;
+            background: #1b2a44;
+            color: #b8ceff;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+        .compat-table td {
+            padding: 0.75rem 0.7rem;
+            border-bottom: 1px solid #1f2f4a;
+            color: #b7c4dc;
+            vertical-align: top;
+        }
+        .compat-table tr:last-child td { border-bottom: none; }
+        .compat-table .hl { color: #ffd966; font-weight: 600; }
+        .compat-table .dim { color: #8a9ab8; font-size: 0.85rem; }
+        .compat-note {
+            background: #16202e;
+            border-radius: 12px;
+            padding: 1.1rem 1.4rem;
+            margin: 1rem 0 1.5rem;
+            color: #a6b8d9;
+            font-size: 0.93rem;
+            border-left: 5px solid #7aa2f7;
+        }
+        .compat-note strong { color: #ffd966; }
+        .compat-note.warn { border-left-color: #ff6b6b; }
+        .compat-note.warn strong { color: #ff9a9a; }
+        .compat-note.ok { border-left-color: #6bff9a; }
+        .compat-note.ok strong { color: #9affb8; }
+
+        footer {
+            margin-top: 4rem;
+            text-align: center;
+            color: #5f6f8a;
+            font-size: 0.85rem;
+            border-top: 1px solid #1e2a3c;
+            padding-top: 2rem;
+        }
+        @media (max-width: 700px) {
+            .grid-2 { grid-template-columns: 1fr; }
+            h1 { font-size: 1.8rem; }
+            .smart-grid { grid-template-columns: 1fr; }
+            .compat-table { font-size: 0.8rem; }
+            .compat-table th, .compat-table td { padding: 0.5rem 0.4rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Материнская плата</h1>
+    <div class="subhead">Как работает «фундамент» компьютера, из чего состоит и что можно к нему подключить</div>
+
+    <!-- ДЕТАЛЬНЫЙ ПРИНЦИП РАБОТЫ -->
+    <div class="deep-section">
+        <h2>⚙️ Принцип работы: подробно по этапам</h2>
+        <p class="lead">Материнская плата — это не пассивная «подставка», а активный коммутатор. Ниже — что происходит с момента нажатия кнопки питания до загрузки ОС, и как компоненты взаимодействуют между собой.</p>
+
+        <div class="stage">
+            <h3><span class="num">1</span> Подача питания и сигнал PS_ON#</h3>
+            <p>Когда вы нажимаете кнопку на корпусе, замыкается цепь <code>PWR_SW</code> на материнской плате. Чип <span class="tech-term">Super I/O</span> (или встроенный контроллер) фиксирует это и отправляет блоку питания сигнал <code>PS_ON#</code> (понижение уровня с 5 В до 0 В по линии ATX 24-pin). Блок питания запускается и выдаёт основные напряжения: <code>+3.3V</code>, <code>+5V</code>, <code>+12V</code>, <code>-12V</code>, <code>+5VSB</code> (дежурное).</p>
+            <p>Пока блок питания не стабилизировал выходные напряжения, материнская плата удерживает процессор в сбросе через сигнал <code>PWR_OK</code> (Power Good). Только когда все напряжения в норме, <code>PWR_OK</code> поднимается в высокий уровень — это разрешает старт процессора.</p>
+        </div>
+
+        <div class="stage">
+            <h3><span class="num">2</span> Стабилизация питания через VRM</h3>
+            <p>Процессор не может работать напрямую от <code>+12V</code> — ему нужно около <code>1.0–1.4 В</code> (Vcore). Этим занимается <span class="tech-term">VRM</span> (Voltage Regulator Module):</p>
+            <ul>
+                <li><strong>ШИМ-контроллер</strong> формирует импульсы с высокой частотой (обычно 300–800 кГц).</li>
+                <li><strong>Мосфеты</strong> (DrMOS / power stages) открываются и закрываются, пропуская ток через <strong>дроссели</strong> (катушки индуктивности).</li>
+                <li><strong>Конденсаторы</strong> сглаживают пульсации, выдавая чистое постоянное напряжение.</li>
+                <li>Обратная связь через <strong>sense-линии</strong> позволяет контроллеру точно удерживать Vcore под нагрузкой (Vdroop-компенсация).</li>
+            </ul>
+            <p>Чем больше фаз у VRM, тем меньше нагрузка на каждую фазу, тем стабильнее питание и ниже температура. Именно поэтому топовые платы имеют 16–20+ фаз, а бюджетные — 4–6.</p>
+        </div>
+
+        <div class="stage">
+            <h3><span class="num">3</span> Сброс процессора и старт BIOS/UEFI</h3>
+            <p>После снятия сигнала <code>RESET#</code> процессор начинает выполнение кода с фиксированного адреса — <code>0xFFFFFFF0</code>. Поскольку там ещё нет оперативной памяти, адрес перенаправляется чипсетом на микросхему <span class="tech-term">SPI Flash</span>, где хранится прошивка UEFI.</p>
+            <p>UEFI выполняет <strong>POST</strong> (Power-On Self-Test):</p>
+            <ul>
+                <li>Проверяет наличие и исправность CPU, RAM, видеокарты.</li>
+                <li>Инициализирует контроллер памяти (тренировка таймингов DDR4/DDR5 — подбор напряжений и задержек для стабильной работы).</li>
+                <li>Перечисляет устройства на шинах PCIe, USB, SATA, NVMe.</li>
+                <li>Применяет пользовательские настройки (XMP/EXPO, частоты, напряжения).</li>
+            </ul>
+        </div>
+
+        <div class="stage">
+            <h3><span class="num">4</span> Инициализация памяти и тренировка DDR</h3>
+            <p>Контроллер памяти (IMC), встроенный в процессор, «тренирует» модули RAM: подбирает <code>tCL</code>, <code>tRCD</code>, <code>tRP</code>, <code>tRAS</code> и напряжения <code>VDD</code>/<code>VDDQ</code>. Если включён профиль <span class="tech-term">XMP</span> (Intel) или <span class="tech-term">EXPO</span> (AMD), UEFI пытается выставить заявленные производителем частоту и тайминги. При неудаче — откатывается на JEDEC-стандарт (например, DDR5-4800 вместо DDR5-6000).</p>
+            <p>После тренировки память доступна процессору, и UEFI может загрузить основные драйверы (DXE-фаза).</p>
+        </div>
+
+        <div class="stage">
+            <h3><span class="num">5</span> Обмен данными: шины и протоколы</h3>
+            <p>Дальше вся работа платы — это маршрутизация данных между компонентами по разным шинам:</p>
+            <ul>
+                <li><strong>PCIe (PCI Express)</strong> — последовательная шина с линиями (lanes). Видеокарта обычно использует <code>x16</code>, NVMe SSD — <code>x4</code>. Каждая линия PCIe 4.0 даёт ~2 ГБ/с в каждую сторону, PCIe 5.0 — ~4 ГБ/с.</li>
+                <li><strong>DMI (Direct Media Interface)</strong> у Intel или <strong>Infinity Fabric</strong> у AMD — связь процессора с чипсетом. Через неё идут USB, SATA, дополнительные PCIe-линии.</li>
+                <li><strong>SATA</strong> — 6 Гбит/с (~600 МБ/с) для HDD и SATA-SSD.</li>
+                <li><strong>USB</strong> — от 1.5 Мбит/с (USB 1.1) до 80 Гбит/с (USB4).</li>
+                <li><strong>I²C / SMBus</strong> — служебные шины для мониторинга (датчики температур, обороты вентиляторов, SPD памяти).</li>
+                <li><strong>LPC</strong> — низкоскоростная шина для Super I/O и BIOS.</li>
+            </ul>
+            <p>Чипсет выступает «коммутатором»: он принимает данные от периферии и перенаправляет их процессору через DMI/Infinity Fabric. Прямые линии PCIe от CPU (обычно x16 для GPU и x4 для NVMe) идут в обход чипсета — это снижает задержки.</p>
+        </div>
+
+        <div class="stage">
+            <h3><span class="num">6</span> Передача управления загрузчику</h3>
+            <p>После успешного POST UEFI ищет загрузочное устройство согласно <span class="tech-term">Boot Order</span>. Находит <code>EFI System Partition</code> (FAT32), загружает <code>bootx64.efi</code> (Windows) или <code>grubx64.efi</code> (Linux) и передаёт управление. С этого момента материнская плата продолжает работать как «мост» между CPU, RAM и периферией, но уже под управлением ОС и её драйверов.</p>
+            <p>В работе плата постоянно следит за питанием и температурой: <span class="tech-term">Super I/O</span> считывает показания датчиков, управляет вентиляторами (PWM/DC), отслеживает перегрев и при критических значениях инициирует аварийное выключение.</p>
+        </div>
+    </div>
+
+    <!-- КОМПОНЕНТЫ -->
+    <div class="grid-2">
+        <div class="card">
+            <h2>🧩 Ключевые компоненты</h2>
+            <ul class="component-list">
+                <li>
+                    <div class="thumb">
+                        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="10" y="10" width="80" height="80" rx="6" fill="#1c2a42" stroke="#4a6fa5" stroke-width="2"/>
+                            <rect x="20" y="20" width="60" height="60" rx="4" fill="#0e1624" stroke="#3d5a8a" stroke-width="1.5"/>
+                            <g fill="#7aa2f7">
+                                <rect x="26" y="26" width="3" height="3"/><rect x="32" y="26" width="3" height="3"/><rect x="38" y="26" width="3" height="3"/><rect x="44" y="26" width="3" height="3"/><rect x="50" y="26" width="3" height="3"/><rect x="56" y="26" width="3" height="3"/><rect x="62" y="26" width="3" height="3"/><rect x="68" y="26" width="3" height="3"/>
+                                <rect x="26" y="32" width="3" height="3"/><rect x="68" y="32" width="3" height="3"/>
+                                <rect x="26" y="38" width="3" height="3"/><rect x="68" y="38" width="3" height="3"/>
+                                <rect x="26" y="44" width="3" height="3"/><rect x="68" y="44" width="3" height="3"/>
+                                <rect x="26" y="50" width="3" height="3"/><rect x="68" y="50" width="3" height="3"/>
+                                <rect x="26" y="56" width="3" height="3"/><rect x="68" y="56" width="3" height="3"/>
+                                <rect x="26" y="62" width="3" height="3"/><rect x="68" y="62" width="3" height="3"/>
+                                <rect x="26" y="68" width="3" height="3"/><rect x="32" y="68" width="3" height="3"/><rect x="38" y="68" width="3" height="3"/><rect x="44" y="68" width="3" height="3"/><rect x="50" y="68" width="3" height="3"/><rect x="56" y="68" width="3" height="3"/><rect x="62" y="68" width="3" height="3"/><rect x="68" y="68" width="3" height="3"/>
+                            </g>
+                            <rect x="40" y="40" width="20" height="20" rx="3" fill="#2a3f6a"/>
+                            <text x="50" y="54" font-size="9" fill="#aac4ff" text-anchor="middle" font-family="Arial">CPU</text>
+                        </svg>
+                    </div>
+                    <div><strong>Сокет (разъём CPU)</strong><span class="desc">Гнездо для установки процессора. Тип сокета определяет совместимость с конкретными моделями CPU (Intel или AMD).</span></div>
+                </li>
+                <li>
+                    <div class="thumb">
+                        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="8" y="8" width="84" height="84" rx="8" fill="#1c2a42" stroke="#4a6fa5" stroke-width="2"/>
+                            <g fill="#0e1624" stroke="#3d5a8a" stroke-width="1.2">
+                                <rect x="18" y="18" width="16" height="16" rx="2"/><rect x="42" y="18" width="16" height="16" rx="2"/><rect x="66" y="18" width="16" height="16" rx="2"/>
+                                <rect x="18" y="42" width="16" height="16" rx="2"/><rect x="42" y="42" width="16" height="16" rx="2"/><rect x="66" y="42" width="16" height="16" rx="2"/>
+                                <rect x="18" y="66" width="16" height="16" rx="2"/><rect x="42" y="66" width="16" height="16" rx="2"/><rect x="66" y="66" width="16" height="16" rx="2"/>
+                            </g>
+                            <g stroke="#ffd966" stroke-width="2" fill="none">
+                                <path d="M34 26 h8 M58 26 h8 M26 34 v8 M50 34 v8 M74 34 v8 M34 58 h8 M58 58 h8 M26 66 v8 M50 66 v8 M74 66 v8"/>
+                            </g>
+                            <circle cx="50" cy="50" r="3" fill="#7aa2f7"/>
+                        </svg>
+                    </div>
+                    <div><strong>VRM (модуль стабилизации напряжения)</strong><span class="desc">Преобразует и стабилизирует питание для процессора. От качества VRM зависит стабильность работы и возможность разгона.</span></div>
+                </li>
+                <li>
+                    <div class="thumb">
+                        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="6" y="30" width="88" height="16" rx="3" fill="#1c2a42" stroke="#4a6fa5" stroke-width="1.8"/>
+                            <rect x="6" y="52" width="88" height="16" rx="3" fill="#1c2a42" stroke="#4a6fa5" stroke-width="1.8"/>
+                            <g fill="#7aa2f7">
+                                <rect x="12" y="34" width="6" height="8"/><rect x="22" y="34" width="6" height="8"/><rect x="32" y="34" width="6" height="8"/><rect x="42" y="34" width="6" height="8"/><rect x="52" y="34" width="6" height="8"/><rect x="62" y="34" width="6" height="8"/><rect x="72" y="34" width="6" height="8"/><rect x="82" y="34" width="6" height="8"/>
+                                <rect x="12" y="56" width="6" height="8"/><rect x="22" y="56" width="6" height="8"/><rect x="32" y="56" width="6" height="8"/><rect x="42" y="56" width="6" height="8"/><rect x="52" y="56" width="6" height="8"/><rect x="62" y="56" width="6" height="8"/><rect x="72" y="56" width="6" height="8"/><rect x="82" y="56" width="6" height="8"/>
+                            </g>
+                            <g fill="#ffd966"><rect x="14" y="46" width="4" height="4"/><rect x="26" y="46" width="4" height="4"/><rect x="38" y="46" width="4" height="4"/><rect x="50" y="46" width="4" height="4"/><rect x="62" y="46" width="4" height="4"/><rect x="74" y="46" width="4" height="4"/><rect x="86" y="46" width="4" height="4"/></g>
+                        </svg>
+                    </div>
+                    <div><strong>Слоты оперативной памяти (DIMM)</strong><span class="desc">Обычно 2 или 4 слота для установки модулей RAM. Поддерживают двухканальный режим для увеличения пропускной способности.</span></div>
+                </li>
+                <li>
+                    <div class="thumb">
+                        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="20" y="20" width="60" height="60" rx="6" fill="#0e1624" stroke="#4a6fa5" stroke-width="2"/>
+                            <g stroke="#7aa2f7" stroke-width="2">
+                                <path d="M30 20 v-8 M42 20 v-8 M54 20 v-8 M66 20 v-8"/>
+                                <path d="M30 80 v8 M42 80 v8 M54 80 v8 M66 80 v8"/>
+                                <path d="M20 30 h-8 M20 42 h-8 M20 54 h-8 M20 66 h-8"/>
+                                <path d="M80 30 h8 M80 42 h8 M80 54 h8 M80 66 h8"/>
+                            </g>
+                            <rect x="34" y="34" width="32" height="32" rx="3" fill="#2a3f6a"/>
+                            <text x="50" y="54" font-size="9" fill="#aac4ff" text-anchor="middle" font-family="Arial">CHIP</text>
+                        </svg>
+                    </div>
+                    <div><strong>Чипсет</strong><span class="desc">Набор микросхем, управляющий периферийными интерфейсами (USB, SATA, PCIe). Определяет класс платы и набор доступных функций.</span></div>
+                </li>
+                <li>
+                    <div class="thumb">
+                        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="14" y="24" width="72" height="52" rx="5" fill="#0e1624" stroke="#4a6fa5" stroke-width="2"/>
+                            <g stroke="#3d5a8a" stroke-width="2">
+                                <path d="M22 24 v-6 M30 24 v-6 M38 24 v-6 M46 24 v-6 M54 24 v-6 M62 24 v-6 M70 24 v-6 M78 24 v-6"/>
+                                <path d="M22 76 v6 M30 76 v6 M38 76 v6 M46 76 v6 M54 76 v6 M62 76 v6 M70 76 v6 M78 76 v6"/>
+                                <path d="M14 32 h-6 M14 40 h-6 M14 48 h-6 M14 56 h-6 M14 64 h-6"/>
+                                <path d="M86 32 h6 M86 40 h6 M86 48 h6 M86 56 h6 M86 64 h6"/>
+                            </g>
+                            <text x="50" y="55" font-size="11" fill="#7aa2f7" text-anchor="middle" font-family="Arial" font-weight="bold">BIOS</text>
+                        </svg>
+                    </div>
+                    <div><strong>BIOS/UEFI (микросхема ПЗУ)</strong><span class="desc">Хранит низкоуровневую прошивку для инициализации оборудования и настройки системы.</span></div>
+                </li>
+                <li>
+                    <div class="thumb">
+                        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="50" cy="50" r="34" fill="#1c2a42" stroke="#4a6fa5" stroke-width="2"/>
+                            <circle cx="50" cy="50" r="26" fill="#0e1624" stroke="#3d5a8a" stroke-width="1.5"/>
+                            <text x="50" y="47" font-size="11" fill="#aac4ff" text-anchor="middle" font-family="Arial" font-weight="bold">CR</text>
+                            <text x="50" y="62" font-size="11" fill="#ffd966" text-anchor="middle" font-family="Arial" font-weight="bold">2032</text>
+                            <path d="M78 28 l6 -6" stroke="#ffd966" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    <div><strong>Батарейка CMOS</strong><span class="desc">Обеспечивает питание микросхемы памяти настроек и часов реального времени, когда компьютер выключен.</span></div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>🎛️ Основные настройки (BIOS/UEFI)</h2>
+            <ul class="component-list">
+                <li>
+                    <div class="thumb">
+                        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="12" y="22" width="76" height="56" rx="5" fill="#0e1624" stroke="#4a6fa5" stroke-width="2"/>
+                            <g stroke="#7aa2f7" stroke-width="2.5" fill="none">
+                                <path d="M24 38 h20 M24 50 h30 M24 62 h16"/>
+                                <path d="M62 38 l6 6 -6 6"/>
+                            </g>
+                            <circle cx="76" cy="62" r="7" fill="#2a3f6a" stroke="#ffd966" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    <div><strong>Boot Order (порядок загрузки)</strong><span class="desc">Выбор устройства, с которого загружается ОС (SSD, USB, сеть).</span></div>
+                </li>
+                <li>
+                    <div class="thumb">
+                        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="8" y="34" width="84" height="14" rx="3" fill="#1c2a42" stroke="#4a6fa5" stroke-width="1.8"/>
+                            <g fill="#7aa2f7"><rect x="14" y="37" width="5" height="8"/><rect x="24" y="37" width="5" height="8"/><rect x="34" y="37" width="5" height="8"/><rect x="44" y="37" width="5" height="8"/><rect x="54" y="37" width="5" height="8"/><rect x="64" y="37" width="5" height="8"/><rect x="74" y="37" width="5" height="8"/><rect x="84" y="37" width="5" height="8"/></g>
+                            <path d="M50 62 l-14 14 h28 z" fill="#ffd966"/>
+                            <text x="50" y="90" font-size="10" fill="#aac4ff" text-anchor="middle" font-family="Arial">XMP</text>
+                        </svg>
+                    </div>
+                    <div><strong>XMP / EXPO (профиль RAM)</strong><span class="desc">Включает заявленную производителем частоту памяти. Без активации RAM работает на базовой скорости.</span></div>
+                </li>
+                <li>
+                    <div class="thumb">
+                        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="50" cy="50" r="30" fill="#0e1624" stroke="#4a6fa5" stroke-width="2"/>
+                            <g stroke="#7aa2f7" stroke-width="3" fill="none">
+                                <path d="M50 50 L50 24"/><path d="M50 50 L68 62"/><path d="M50 50 L32 62"/>
+                            </g>
+                            <circle cx="50" cy="50" r="5" fill="#ffd966"/>
+                            <g stroke="#3d5a8a" stroke-width="2"><path d="M50 12 v8 M50 80 v8 M12 50 h8 M80 50 h8"/></g>
+                        </svg>
+                    </div>
+                    <div><strong>Управление вентиляторами (Q-Fan / Smart Fan)</strong><span class="desc">Настройка кривых скорости вращения кулеров для баланса шума и охлаждения.</span></div>
+                </li>
+                <li>
+                    <div class="thumb">
+                        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="30" y="30" width="40" height="40" rx="6" fill="#0e1624" stroke="#4a6fa5" stroke-width="2"/>
+                            <path d="M50 38 a12 12 0 0 1 0 24 v-6 a6 6 0 0 0 0 -12 z" fill="#7aa2f7"/>
+                            <rect x="46" y="46" width="8" height="20" rx="2" fill="#ffd966"/>
+                            <text x="50" y="88" font-size="9" fill="#aac4ff" text-anchor="middle" font-family="Arial">SECURE</text>
+                        </svg>
+                    </div>
+                    <div><strong>Secure Boot</strong><span class="desc">Проверяет цифровую подпись загрузчика для защиты от вредоносного ПО на раннем этапе.</span></div>
+                </li>
+                <li>
+                    <div class="thumb">
+                        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M50 20 L60 40 L82 42 L66 58 L70 80 L50 70 L30 80 L34 58 L18 42 L40 40 Z" fill="#0e1624" stroke="#ffd966" stroke-width="2"/>
+                            <path d="M50 30 L56 42 L70 43 L60 53 L63 67 L50 60 L37 67 L40 53 L30 43 L44 42 Z" fill="#ffd966" opacity="0.7"/>
+                        </svg>
+                    </div>
+                    <div><strong>Разгон (Overclocking)</strong><span class="desc">Ручное повышение частоты CPU или RAM (доступно не на всех чипсетах).</span></div>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- РАЗЪЁМЫ (КРАТКАЯ КАРТОЧКА) -->
+    <div class="connector-section">
+        <h2>🔌 Все основные разъёмы</h2>
+        <p>Внутренние и внешние интерфейсы, которые вы найдёте на современной материнской плате.</p>
+        <div class="connector-grid">
+            <div class="connector-item">
+                <div class="thumb">
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="14" y="14" width="72" height="72" rx="6" fill="#1c2a42" stroke="#4a6fa5" stroke-width="2"/>
+                        <rect x="24" y="24" width="52" height="52" rx="3" fill="#0e1624"/>
+                        <g fill="#7aa2f7"><rect x="30" y="30" width="3" height="3"/><rect x="38" y="30" width="3" height="3"/><rect x="46" y="30" width="3" height="3"/><rect x="54" y="30" width="3" height="3"/><rect x="62" y="30" width="3" height="3"/><rect x="30" y="38" width="3" height="3"/><rect x="62" y="38" width="3" height="3"/><rect x="30" y="46" width="3" height="3"/><rect x="62" y="46" width="3" height="3"/><rect x="30" y="54" width="3" height="3"/><rect x="62" y="54" width="3" height="3"/><rect x="30" y="62" width="3" height="3"/><rect x="38" y="62" width="3" height="3"/><rect x="46" y="62" width="3" height="3"/><rect x="54" y="62" width="3" height="3"/><rect x="62" y="62" width="3" height="3"/></g>
+                        <text x="50" y="52" font-size="8" fill="#aac4ff" text-anchor="middle" font-family="Arial">LGA</text>
+                    </svg>
+                </div>
+                <div><div class="name">LGA / AM5 (сокет CPU)</div><div class="purpose">Установка процессора. Количество контактов и расположение ключей уникальны для каждой платформы.</div></div>
+            </div>
+            <div class="connector-item">
+                <div class="thumb">
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="6" y="34" width="88" height="14" rx="3" fill="#1c2a42" stroke="#4a6fa5" stroke-width="1.8"/>
+                        <rect x="6" y="54" width="88" height="14" rx="3" fill="#1c2a42" stroke="#4a6fa5" stroke-width="1.8"/>
+                        <g fill="#7aa2f7"><rect x="12" y="37" width="5" height="8"/><rect x="22" y="37" width="5" height="8"/><rect x="32" y="37" width="5" height="8"/><rect x="42" y="37" width="5" height="8"/><rect x="52" y="37" width="5" height="8"/><rect x="62" y="37" width="5" height="8"/><rect x="72" y="37" width="5" height="8"/><rect x="82" y="37" width="5" height="8"/><rect x="12" y="57" width="5" height="8"/><rect x="22" y="57" width="5" height="8"/><rect x="32" y="57" width="5" height="8"/><rect x="42" y="57" width="5" height="8"/><rect x="52" y="57" width="5" height="8"/><rect x="62" y="57" width="5" height="8"/><rect x="72" y="57" width="5" height="8"/><rect x="82" y="57" width="5" height="8"/></g>
+                        <g fill="#ffd966"><rect x="14" y="46" width="3" height="4"/><rect x="26" y="46" width="3" height="4"/><rect x="38" y="46" width="3" height="4"/><rect x="50" y="46" width="3" height="4"/><rect x="62" y="46" width="3" height="4"/><rect x="74" y="46" width="3" height="4"/><rect x="86" y="46" width="3" height="4"/></g>
+                    </svg>
+                </div>
+                <div><div class="name">DIMM (DDR4 / DDR5)</div><div class="purpose">Слоты для модулей оперативной памяти. Обычно 2 или 4 штуки.</div></div>
+            </div>
+            <div class="connector-item">
+                <div class="thumb">
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="6" y="42" width="88" height="16" rx="3" fill="#1c2a42" stroke="#4a6fa5" stroke-width="2"/>
+                        <rect x="12" y="45" width="20" height="10" rx="2" fill="#2a3f6a"/>
+                        <g fill="#7aa2f7"><rect x="38" y="45" width="4" height="10"/><rect x="46" y="45" width="4" height="10"/><rect x="54" y="45" width="4" height="10"/><rect x="62" y="45" width="4" height="10"/><rect x="70" y="45" width="4" height="10"/><rect x="78" y="45" width="4" height="10"/></g>
+                        <text x="22" y="38" font-size="8" fill="#ffd966" text-anchor="middle" font-family="Arial">x16</text>
+                    </svg>
+                </div>
+                <div><div class="name">PCIe x16</div><div class="purpose">Основной слот для видеокарты. Также может использоваться для других плат расширения.</div></div>
+            </div>
+            <div class="connector-item">
+                <div class="thumb">
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="6" y="46" width="88" height="10" rx="2" fill="#1c2a42" stroke="#4a6fa5" stroke-width="2"/>
+                        <g fill="#7aa2f7"><rect x="16" y="48" width="4" height="6"/><rect x="26" y="48" width="4" height="6"/><rect x="36" y="48" width="4" height="6"/><rect x="46" y="48" width="4" height="6"/><rect x="56" y="48" width="4" height="6"/><rect x="66" y="48" width="4" height="6"/><rect x="76" y="48" width="4" height="6"/></g>
+                        <text x="50" y="40" font-size="8" fill="#ffd966" text-anchor="middle" font-family="Arial">x1</text>
+                    </svg>
+                </div>
+                <div><div class="name">PCIe x1 / x4</div><div class="purpose">Слоты для звуковых карт, сетевых адаптеров, ТВ-тюнеров и других карт расширения.</div></div>
+            </div>
+            <div class="connector-item">
+                <div class="thumb">
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="10" y="42" width="80" height="16" rx="3" fill="#1c2a42" stroke="#4a6fa5" stroke-width="2"/>
+                        <rect x="16" y="45" width="10" height="10" rx="1" fill="#2a3f6a"/>
+                        <path d="M34 50 h40" stroke="#7aa2f7" stroke-width="2" stroke-dasharray="4 3"/>
+                        <text x="50" y="34" font-size="9" fill="#ffd966" text-anchor="middle" font-family="Arial">M.2</text>
+                    </svg>
+                </div>
+                <div><div class="name">M.2 (Key M)</div><div class="purpose">Установка NVMe SSD или модулей Wi-Fi. Позволяет достичь скорости несколько ГБ/с.</div></div>
+            </div>
+            <div class="connector-item">
+                <div class="thumb">
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="10" y="40" width="80" height="20" rx="3" fill="#1c2a42" stroke="#4a6fa5" stroke-width="2"/>
+                        <path d="M16 46 h68 M16 54 h68" stroke="#7aa2f7" stroke-width="1.5" stroke-dasharray="3 2"/>
+                        <rect x="14" y="44" width="8" height="12" fill="#2a3f6a"/>
+                        <rect x="78" y="44" width="8" height="12" fill="#2a3f6a"/>
+                        <text x="50" y="34" font-size="9" fill="#ffd966" text-anchor="middle" font-family="Arial">SATA</text>
+                    </svg>
+                </div>
+                <div><div class="name">SATA 6 Гбит/с</div><div class="purpose">Подключение жёстких дисков (HDD) и SATA-SSD, а также оптических приводов.</div></div>
+            </div>
+            <div class="connector-item">
+                <div class="thumb">
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="6" y="30" width="88" height="40" rx="4" fill="#1c2a42" stroke="#4a6fa5" stroke-width="2"/>
+                        <g fill="#0e1624" stroke="#3d5a8a" stroke-width="1.2">
+                            <rect x="12" y="36" width="6" height="6"/><rect x="20" y="36" width="6" height="6"/><rect x="28" y="36" width="6" height="6"/><rect x="36" y="36" width="6" height="6"/><rect x="44" y="36" width="6" height="6"/><rect x="52" y="36" width="6" height="6"/><rect x="60" y="36" width="6" height="6"/><rect x="68" y="36" width="6" height="6"/><rect x="76" y="36" width="6" height="6"/><rect x="84" y="36" width="6" height="6"/>
+                            <rect x="12" y="46" width="6" height="6"/><rect x="20" y="46" width="6" height="6"/><rect x="28" y="46" width="6" height="6"/><rect x="36" y="46" width="6" height="6"/><rect x="44" y="46" width="6" height="6"/><rect x="52" y="46" width="6" height="6"/><rect x="60" y="46" width="6" height="6"/><rect x="68" y="46" width="6" height="6"/><rect x="76" y="46" width="6" height="6"/><rect x="84" y="46" width="6" height="6"/>
+                            <rect x="12" y="56" width="6" height="6"/><rect x="20" y="56" width="6" height="6"/><rect x="28" y="56" width="6" height="6"/><rect x="36" y="56" width="6" height="6"/><rect x="44" y="56" width="6" height="6"/><rect x="52" y="56" width="6" height="6"/><rect x="60" y="56" width="6" height="6"/><rect x="68" y="56" width="6" height="6"/><rect x="76" y="56" width="6" height="6"/><rect x="84" y="56" width="6" height="6"/>
+                        </g>
+                        <text x="50" y="26" font-size="8" fill="#ffd966" text-anchor="middle" font-family="Arial">24-pin</text>
+                    </svg>
+                </div>
+                <div><div class="name">ATX 24-pin</div><div class="purpose">Основной разъём питания от блока питания. Подаёт напряжения +3.3V, +5V, +12V.</div></div>
+            </div>
+            <div class="connector-item">
+                <div class="thumb">
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="20" y="30" width="60" height="40" rx="4" fill="#1c2a42" stroke="#4a6fa5" stroke-width="2"/>
+                        <g fill="#0e1624" stroke="#3d5a8a" stroke-width="1.2">
+                            <rect x="26" y="36" width="7" height="7"/><rect x="36" y="36" width="7" height="7"/><rect x="46" y="36" width="7" height="7"/><rect x="56" y="36" width="7" height="7"/><rect x="66" y="36" width="7" height="7"/>
+                            <rect x="26" y="46" width="7" height="7"/><rect x="36" y="46" width="7" height="7"/><rect x="46" y="46" width="7" height="7"/><rect x="56" y="46" width="7" height="7"/><rect x="66" y="46" width="7" height="7"/>
+                            <rect x="26" y="56" width="7" height="7"/><rect x="36" y="56" width="7" height="7"/><rect x="46" y="56" width="7" height="7"/><rect x="56" y="56" width="7" height="7"/><rect x="66" y="56" width="7" height="7"/>
+                        </g>
+                        <text x="50" y="24" font-size="8" fill="#ffd966" text-anchor="middle" font-family="Arial">EPS</text>
+                    </svg>
+                </div>
+                <div><div class="name">EPS 8-pin (CPU)</div><div class="purpose">Дополнительное питание процессора. Обязателен для мощных CPU.</div></div>
+            </div>
+            <div class="connector-item">
+                <div class="thumb">
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="50" cy="50" r="30" fill="#0e1624" stroke="#4a6fa5" stroke-width="2"/>
+                        <g stroke="#7aa2f7" stroke-width="4" fill="none" stroke-linecap="round">
+                            <path d="M50 50 L50 28"/><path d="M50 50 L66 60"/><path d="M50 50 L34 60"/>
+                        </g>
+                        <circle cx="50" cy="50" r="4" fill="#ffd966"/>
+                        <text x="50" y="94" font-size="8" fill="#aac4ff" text-anchor="middle" font-family="Arial">FAN</text>
+                    </svg>
+                </div>
+                <div><div class="name">CPU_FAN / SYS_FAN</div><div class="purpose">Подключение вентиляторов охлаждения процессора и корпуса. 4-контактные поддерживают PWM-регулировку.</div></div>
+            </div>
+            <div class="connector-item">
+                <div class="thumb">
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="16" y="36" width="68" height="28" rx="3" fill="#1c2a42" stroke="#4a6fa5" stroke-width="2"/>
+                        <g fill="#7aa2f7">
+                            <rect x="22" y="42" width="8" height="6"/><rect x="34" y="42" width="8" height="6"/><rect x="46" y="42" width="8" height="6"/><rect x="58" y="42" width="8" height="6"/><rect x="70" y="42" width="8" height="6"/>
+                            <rect x="22" y="52" width="8" height="6"/><rect x="34" y="52" width="8" height="6"/><rect x="46" y="52" width="8" height="6"/><rect x="58" y="52" width="8" height="6"/><rect x="70" y="52" width="8" height="6"/>
+                        </g>
+                        <text x="50" y="30" font-size="8" fill="#ffd966" text-anchor="middle" font-family="Arial">USB</text>
+                    </svg>
+                </div>
+                <div><div class="name">USB 2.0 / 3.0 (внутренние)</div><div class="purpose">Колодки для вывода портов USB на переднюю панель корпуса.</div></div>
+            </div>
+            <div class="connector-item">
+                <div class="thumb">
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="20" y="30" width="60" height="40" rx="4" fill="#1c2a42" stroke="#4a6fa5" stroke-width="2"/>
+                        <g fill="#7aa2f7">
+                            <circle cx="34" cy="42" r="3"/><circle cx="46" cy="42" r="3"/><circle cx="58" cy="42" r="3"/><circle cx="70" cy="42" r="3"/>
+                            <circle cx="34" cy="58" r="3"/><circle cx="46" cy="58" r="3"/><circle cx="58" cy="58" r="3"/><circle cx="70" cy="58" r="3"/>
+                        </g>
+                        <text x="50" y="84" font-size="8" fill="#ffd966" text-anchor="middle" font-family="Arial">AUDIO</text>
+                    </svg>
+                </div>
+                <div><div class="name">HD_AUDIO (передняя панель)</div><div class="purpose">Подключение разъёмов наушников и микрофона на лицевой стороне корпуса.</div></div>
+            </div>
+            <div class="connector-item">
+                <div class="thumb">
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="10" y="24" width="80" height="52" rx="4" fill="#1c2a42" stroke="#4a6fa5" stroke-width="2"/>
+                        <g fill="#0e1624" stroke="#3d5a8a" stroke-width="1">
+                            <rect x="16" y="30" width="10" height="8"/><rect x="30" y="30" width="10" height="8"/><rect x="44" y="30" width="10" height="8"/><rect x="58" y="30" width="10" height="8"/><rect x="72" y="30" width="12" height="8"/>
+                            <rect x="16" y="44" width="12" height="8"/><rect x="32" y="44" width="8" height="8"/><rect x="44" y="44" width="8" height="8"/><rect x="56" y="44" width="8" height="8"/><rect x="68" y="44" width="16" height="8"/>
+                            <rect x="16" y="58" width="8" height="8"/><rect x="28" y="58" width="8" height="8"/><rect x="40" y="58" width="8" height="8"/><rect x="52" y="58" width="8" height="8"/><rect x="64" y="58" width="8" height="8"/><rect x="76" y="58" width="8" height="8"/>
+                        </g>
+                    </svg>
+                </div>
+                <div><div class="name">Задняя панель (I/O)</div><div class="purpose">Внешние порты: USB, HDMI/DisplayPort, Ethernet (RJ-45), аудио, PS/2, антенны Wi-Fi.</div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ЧИПСЕТЫ -->
+    <div class="card" style="margin-bottom: 3rem;">
+        <h2>🧬 Чипсеты: Intel и AMD</h2>
+        <p style="color: #b0c0dc; margin-bottom: 1.2rem;">Чипсет определяет функциональность платы: поддержку разгона, количество портов USB и SATA, возможности PCIe. Он не подлежит замене — выбирается вместе с материнской платой.</p>
+
+        <h3 style="margin: 1.2rem 0 0.5rem; color: #aac4ff;">Intel</h3>
+        <table class="chipset-table">
+            <thead><tr><th>Серия</th><th>Класс</th><th>Особенности</th></tr></thead>
+            <tbody>
+                <tr><td class="series">H</td><td>Бюджетный</td><td>Базовый функционал, без разгона CPU. Для офисных и домашних ПК.</td></tr>
+                <tr><td class="series">B</td><td>Средний / народный</td><td>Оптимальный баланс. Часто поддерживает разгон памяти, достаточное число портов.</td></tr>
+                <tr><td class="series">Z</td><td>Топовый</td><td>Полная поддержка разгона CPU и памяти, максимум линий PCIe и портов.</td></tr>
+            </tbody>
+        </table>
+
+        <h3 style="margin: 1.8rem 0 0.5rem; color: #aac4ff;">AMD</h3>
+        <table class="chipset-table">
+            <thead><tr><th>Серия</th><th>Класс</th><th>Особенности</th></tr></thead>
+            <tbody>
+                <tr><td class="series">A</td><td>Бюджетный</td><td>Базовые платы, как правило, без разгона. Для простых сборок.</td></tr>
+                <tr><td class="series">B</td><td>Средний / народный</td><td>Лучший выбор для большинства: поддержка разгона, хорошая расширяемость.</td></tr>
+                <tr><td class="series">X</td><td>Топовый</td><td>Максимальные возможности, большое количество линий PCIe и портов, для энтузиастов.</td></tr>
+            </tbody>
+        </table>
+        <div class="note">
+            💡 <strong>Совет:</strong> Для обычного пользователя или геймера среднего уровня оптимальны платы на чипсетах <strong>B-серии</strong> (Intel B760/B650 или AMD B650). Они дают всё необходимое без переплаты за функции, которые вы не будете использовать.
+        </div>
+    </div>
+
+    <!-- НОВЫЙ БОЛЬШОЙ РАЗДЕЛ: ФОРМ-ФАКТОРЫ, РАЗЪЁМЫ, СОВМЕСТИМОСТЬ -->
+    <div class="compat-section">
+        <h2>📐 Форм-факторы, разъёмы и совместимость</h2>
+        <p class="lead">Размер платы определяет, сколько слотов расширения и портов вы получите, а также в какой корпус она поместится. Тип разъёма — сколько линий PCIe доступно и с какой скоростью. Ниже — все детали и ограничения.</p>
+
+        <h3>1. Форм-факторы материнских плат</h3>
+        <p style="color: #b7c4dc; margin-bottom: 1rem;">Форм-фактор — это стандарт, который задаёт физические размеры платы, расположение крепёжных отверстий и портов на задней панели. Благодаря ему платы, корпуса и блоки питания разных производителей совместимы между собой [citation:18].</p>
+
+        <table class="compat-table">
+            <thead>
+                <tr>
+                    <th>Форм-фактор</th>
+                    <th>Размер (мм)</th>
+                    <th>Слоты расширения (макс.)</th>
+                    <th>Слоты RAM (типично)</th>
+                    <th>M.2 (типично)</th>
+                    <th>Для чего</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="hl">Mini-ITX</td>
+                    <td>170 × 170 [citation:7][citation:13]</td>
+                    <td>1 [citation:1]</td>
+                    <td>2</td>
+                    <td>1</td>
+                    <td>Компактные HTPC, SFF-сборки. Часто дороже mATX при тех же характеристиках [citation:7].</td>
+                </tr>
+                <tr>
+                    <td class="hl">Micro-ATX (mATX)</td>
+                    <td>244 × 244 [citation:7]</td>
+                    <td>4 [citation:1]</td>
+                    <td>4 (реже 2)</td>
+                    <td>1–2</td>
+                    <td>Средний сегмент, игровые ПК. Баланс цены, размера и возможностей [citation:7].</td>
+                </tr>
+                <tr>
+                    <td class="hl">ATX</td>
+                    <td>305 × 244 [citation:7][citation:1]</td>
+                    <td>7 [citation:1]</td>
+                    <td>4</td>
+                    <td>2–4</td>
+                    <td>Стандарт для большинства сборок. Максимум слотов и портов без экстремальной цены [citation:7].</td>
+                </tr>
+                <tr>
+                    <td class="hl">E-ATX (SSI-EEB)</td>
+                    <td>305 × 330 (и шире) [citation:7][citation:1]</td>
+                    <td>7+</td>
+                    <td>4–8</td>
+                    <td>3–5</td>
+                    <td>HEDT, рабочие станции, серверы. Часто с двумя сокетами [citation:1][citation:7].</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="compat-note">
+            <strong>Важно про E-ATX:</strong> единого стандарта ширины нет — разные производители делают платы шириной от 10.5 до 13 дюймов (270–330 мм). Поэтому перед покупкой E-ATX обязательно проверяйте спецификацию корпуса: он должен явно поддерживать <em>вашу</em> ширину, а не просто «E-ATX» [citation:1][citation:7].
+        </div>
+
+        <div class="compat-note ok">
+            <strong>Правило совместимости корпуса:</strong> корпус, рассчитанный на ATX, обычно принимает и mATX, и Mini-ITX (крепёжные отверстия совпадают). Обратное неверно: в корпус Mini-ITX ATX-плата не влезет. Всегда смотрите список поддерживаемых форм-факторов в спецификации корпуса [citation:4].
+        </div>
+
+        <h3>2. Разъёмы PCIe: физические и электрические вариации</h3>
+        <p style="color: #b7c4dc; margin-bottom: 0.8rem;">Слот PCIe характеризуется двумя параметрами: <strong>физическим размером</strong> (сколько контактов, какая длина) и <strong>электрической конфигурацией</strong> (сколько линий реально подключено к плате). Они могут не совпадать — это главный источник путаницы.</p>
+
+        <table class="compat-table">
+            <thead>
+                <tr>
+                    <th>Тип слота</th>
+                    <th>Линий (физически)</th>
+                    <th>Типичное применение</th>
+                    <th>Пропускная способность (Gen 3 / Gen 4 / Gen 5, в одну сторону)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="hl">PCIe x1</td>
+                    <td>1</td>
+                    <td>Звуковые карты, Wi-Fi, USB-контроллеры, сетевые карты 1G [citation:11][citation:16]</td>
+                    <td>~1 / 2 / 4 ГБ/с</td>
+                </tr>
+                <tr>
+                    <td class="hl">PCIe x4</td>
+                    <td>4</td>
+                    <td>NVMe SSD (через переходник), RAID-контроллеры, 10G сетевы карты [citation:16]</td>
+                    <td>~4 / 8 / 16 ГБ/с</td>
+                </tr>
+                <tr>
+                    <td class="hl">PCIe x8</td>
+                    <td>8</td>
+                    <td>Высокоскоростные сетевые карты, некоторые GPU в SLI/CrossFire, HBA [citation:11]</td>
+                    <td>~8 / 16 / 32 ГБ/с</td>
+                </tr>
+                <tr>
+                    <td class="hl">PCIe x16</td>
+                    <td>16</td>
+                    <td>Видеокарты — основной слот [citation:9][citation:11]</td>
+                    <td>~16 / 32 / 64 ГБ/с</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="compat-note warn">
+            <strong>Физическая vs электрическая совместимость:</strong> слот x16 может быть электрически x4 или даже x1 — на бюджетных платах это частая практика. Карта x16 физически влезет, но будет работать на скорости x4. Ориентируйтесь на спецификацию платы: там указано «PCIe x16 (electrical x4)» или подобное. <br><br>
+            <strong>Обратное не работает:</strong> карту x16 нельзя вставить в слот x1/x4/x8 физически. Карту x1 можно вставить в любой слот большего размера, и она будет работать на скорости x1 [citation:8].
+        </div>
+
+        <div class="compat-note">
+            <strong>Правило «больше — можно, меньше — нельзя»:</strong> карта с меньшим числом линий работает в слоте с большим числом линий, но на скорости карты. Карта с большим числом линий не влезает в меньший слот физически [citation:8].
+        </div>
+
+        <h3>3. Линии PCIe: CPU vs Chipset</h3>
+        <p style="color: #b7c4dc; margin-bottom: 0.8rem;">Не все линии PCIe одинаковы. Процессор имеет собственный набор линий (обычно 16 для GPU + 4 для NVMe), а чипсет — свой, который подключается к CPU через DMI (Intel) или Infinity Fabric (AMD) [citation:9][citation:17].</p>
+
+        <table class="compat-table">
+            <thead>
+                <tr>
+                    <th>Источник линий</th>
+                    <th>Скорость</th>
+                    <th>Задержка</th>
+                    <th>Ограничения</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="hl">CPU PCIe (прямые)</td>
+                    <td>Максимальная (Gen 5 у новых CPU)</td>
+                    <td>Минимальная</td>
+                    <td>Мало линий: обычно x16 (GPU) + x4 (NVMe). Делить нельзя без потери скорости.</td>
+                </tr>
+                <tr>
+                    <td class="hl">Chipset PCIe (PCH)</td>
+                    <td>Ниже (часто Gen 3/4)</td>
+                    <td>Выше (через DMI/Fabric)</td>
+                    <td>Много линий, но все делят пропускную способность канала DMI. При активной работе нескольких устройств возможен «бутылочный горлышко» [citation:9][citation:17].</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="compat-note warn">
+            <strong>Ограниченная совместимость на практике:</strong> если вы устанавливаете две видеокарты или GPU + быстрый NVMe, линии CPU делятся (например, x16 → x8+x8). Это нормально, но проверяйте спецификацию: на некоторых платах второй слот x16 электрически x4 от чипсета — производительность GPU упадёт.
+        </div>
+
+        <h3>4. Другие разъёмы: ключи M.2 и версии SATA</h3>
+        <table class="compat-table">
+            <thead>
+                <tr>
+                    <th>Разъём</th>
+                    <th>Вариации</th>
+                    <th>Совместимость / ограничения</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="hl">M.2</td>
+                    <td>Key M (NVMe/SATA SSD), Key E (Wi-Fi), Key B (реже)</td>
+                    <td>Не все слоты M.2 поддерживают SATA-режим. NVMe SSD работает в любом Key M, но скорость зависит от версии PCIe слота (Gen 3 / Gen 4 / Gen 5).</td>
+                </tr>
+                <tr>
+                    <td class="hl">SATA</td>
+                    <td>SATA 3 (6 Гбит/с), SATA 2 (3 Гбит/с)</td>
+                    <td>Обратная совместимость: SATA 3 SSD работает в SATA 2 порту, но на скорости 3 Гбит/с. Кабели SATA 3 и SATA 2 взаимозаменяемы.</td>
+                </tr>
+                <tr>
+                    <td class="hl">Питание CPU</td>
+                    <td>EPS 8-pin, 4+4-pin, 8+4-pin, 8+8-pin</td>
+                    <td>Для мощных CPU нужны все разъёмы. 4-pin вставится в 8-pin (с ключом), но мощности может не хватить при разгоне.</td>
+                </tr>
+                <tr>
+                    <td class="hl">Питание платы</td>
+                    <td>ATX 24-pin (иногда 20+4)</td>
+                    <td>20+4-pin совместим с 24-pin. Старые БП с 20-pin могут не дать нужной мощности для современных плат.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>5. Сводка ограниченной совместимости</h3>
+        <div class="compat-note">
+            <strong>Сокет:</strong> CPU подходит только к сокету своего типа. LGA1700 ≠ AM5, и даже внутри одного бренда сокеты меняются (AM4 → AM5). Проверяйте список поддерживаемых CPU на сайте производителя платы — он может требовать обновления BIOS.
+        </div>
+        <div class="compat-note">
+            <strong>Память:</strong> DDR4 не вставляется в DDR5-слот (разные ключи). Частота и объём ограничены и платой, и контроллером памяти CPU. XMP/EXPO-профиль может не заработать на бюджетном чипсете.
+        </div>
+        <div class="compat-note">
+            <strong>Корпус:</strong> ATX-плата требует ATX-корпус (или больше). Mini-ITX-плата влезет почти везде, но может потребовать низкопрофильный кулер и SFX-блок питания.
+        </div>
+        <div class="compat-note warn">
+            <strong>Блок питания:</strong> смотрите не только на мощность, но и на наличие нужных разъёмов (EPS 8-pin для CPU, 12VHPWR для новых GPU). Переходники допустимы, но увеличивают риск плохого контакта.
+        </div>
+    </div>
+
+    <!-- SMART-НАСТРОЙКИ С ПРИМЕРАМИ -->
+    <div class="smart-section">
+        <h2>✨ Smart-настройки: примеры работы</h2>
+        <p class="lead">«Умные» технологии материнских плат автоматически подбирают параметры под ваши задачи — от тишины в простое до максимальной производительности в играх. Ниже — как они работают на практике.</p>
+
+        <div class="smart-grid">
+            <!-- Smart Fan -->
+            <div class="smart-card">
+                <div class="smart-head">
+                    <div class="thumb">
+                        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="50" cy="50" r="30" fill="#0e1624" stroke="#7a5aaf" stroke-width="2"/>
+                            <g stroke="#bb9af7" stroke-width="4" fill="none" stroke-linecap="round">
+                                <path d="M50 50 L50 26"/><path d="M50 50 L68 60"/><path d="M50 50 L32 60"/>
+                            </g>
+                            <circle cx="50" cy="50" r="5" fill="#ffd966"/>
+                            <path d="M20 80 q10 -15 20 0 q10 15 20 0 q10 -15 20 0" stroke="#7aa2f7" stroke-width="2" fill="none"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="subtitle">Q-Fan / Smart Fan</div>
+                        <div class="title">Умное управление вентиляторами</div>
+                    </div>
+                </div>
+                <p>Плата считывает температуру с датчиков (CPU, VRM, чипсет) и подбирает обороты кулеров по заданной кривой. В простое — тишина, под нагрузкой — максимум охлаждения.</p>
+                <div class="example">
+                    <strong>Пример:</strong> вентилятор CPU настроен по кривой <code>40°C → 30%</code>, <code>70°C → 60%</code>, <code>85°C → 100%</code>. В играх процессор греется до 75°C, и плата автоматически поднимает обороты до ~70% — без ручного вмешательства.
+                </div>
+            </div>
+
+            <!-- XMP / EXPO -->
+            <div class="smart-card">
+                <div class="smart-head">
+                    <div class="thumb">
+                        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="8" y="34" width="84" height="14" rx="3" fill="#1c2a42" stroke="#7a5aaf" stroke-width="1.8"/>
+                            <g fill="#bb9af7"><rect x="14" y="37" width="5" height="8"/><rect x="24" y="37" width="5" height="8"/><rect x="34" y="37" width="5" height="8"/><rect x="44" y="37" width="5" height="8"/><rect x="54" y="37" width="5" height="8"/><rect x="64" y="37" width="5" height="8"/><rect x="74" y="37" width="5" height="8"/><rect x="84" y="37" width="5" height="8"/></g>
+                            <path d="M50 62 l-12 12 h24 z" fill="#ffd966"/>
+                            <path d="M40 72 v8 M50 74 v8 M60 72 v8" stroke="#ffd966" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="subtitle">XMP / EXPO / DOCP</div>
+                        <div class="title">Автопрофиль оперативной памяти</div>
+                    </div>
+                </div>
+                <p>Модули RAM хранят в SPD-чипе несколько профилей. Плата при включении читает профиль и автоматически выставляет частоту, тайминги и напряжение.</p>
+                <div class="example">
+                    <strong>Пример:</strong> модуль DDR5-6000 CL30 без XMP работает на <code>4800 МГц CL40</code>. Включаем профиль EXPO — плата выставляет <code>6000 МГц CL30</code> и напряжение <code>1.35 В</code>. Прирост в играх — 5–15%.
+                </div>
+            </div>
+
+            <!-- PBO -->
+            <div class="smart-card">
+                <div class="smart-head">
+                    <div class="thumb">
+                        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M20 80 L40 60 L55 70 L80 30" stroke="#bb9af7" stroke-width="3" fill="none"/>
+                            <path d="M80 30 l-10 2 l6 8 z" fill="#ffd966"/>
+                            <circle cx="20" cy="80" r="3" fill="#7aa2f7"/><circle cx="40" cy="60" r="3" fill="#7aa2f7"/><circle cx="55" cy="70" r="3" fill="#7aa2f7"/>
+                            <text x="50" y="94" font-size="9" fill="#aac4ff" text-anchor="middle" font-family="Arial">PBO</text>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="subtitle">AMD Precision Boost Overdrive</div>
+                        <div class="title">Авторазгон процессора</div>
+                    </div>
+                </div>
+                <p>Процессор сам повышает частоты и напряжение в пределах температурного и энергетического лимита. Плата лишь разрешает более высокие лимиты (PPT/TDC/EDC).</p>
+                <div class="example">
+                    <strong>Пример:</strong> Ryzen 7 7700X в стоке бустит до <code>5.4 ГГц</code>. Включаем PBO + Curve Optimizer −20 → процессор держит <code>5.5–5.6 ГГц</code> при той же температуре, а в многопотоке прибавляет ~5%.
+                </div>
+            </div>
+
+            <!-- Curve Optimizer -->
+            <div class="smart-card">
+                <div class="smart-head">
+                    <div class="thumb">
+                        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M10 70 q20 -40 40 0 t40 0" stroke="#7aa2f7" stroke-width="3" fill="none"/>
+                            <path d="M10 55 q20 -40 40 0 t40 0" stroke="#bb9af7" stroke-width="2" fill="none" stroke-dasharray="4 3"/>
+                            <circle cx="50" cy="55" r="4" fill="#ffd966"/>
+                            <text x="50" y="90" font-size="9" fill="#aac4ff" text-anchor="middle" font-family="Arial">CURVE</text>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="subtitle">Curve Optimizer / Undervolting</div>
+                        <div class="title">Снижение напряжения по ядрам</div>
+                    </div>
+                </div>
+                <p>Плата подаёт на каждое ядро чуть меньше напряжения (offset −10…−30 мВ). Процессор греется меньше и дольше держит высокие частоты.</p>
+                <div class="example">
+                    <strong>Пример:</strong> i5-13600K с offset <code>−0.08 В</code> в играх сбрасывает температуру с 85°C до 72°C, при этом производительность не падает, а шум кулера снижается.
+                </div>
+            </div>
+
+            <!-- Adaptive Voltage -->
+            <div class="smart-card">
+                <div class="smart-head">
+                    <div class="thumb">
+                        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="20" y="30" width="60" height="40" rx="4" fill="#0e1624" stroke="#7a5aaf" stroke-width="2"/>
+                            <path d="M28 50 h12 l4 -10 l6 20 l4 -10 h18" stroke="#ffd966" stroke-width="2.5" fill="none"/>
+                            <text x="50" y="84" font-size="9" fill="#aac4ff" text-anchor="middle" font-family="Arial">ADAPTIVE</text>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="subtitle">Adaptive / Offset Voltage</div>
+                        <div class="title">Гибкое напряжение CPU</div>
+                    </div>
+                </div>
+                <p>Плата не фиксирует Vcore жёстко, а добавляет смещение к «родному» напряжению процессора. В простое напряжение падает, под нагрузкой — поднимается ровно настолько, насколько нужно.</p>
+                <div class="example">
+                    <strong>Пример:</strong> вместо фиксированных <code>1.30 В</code> ставим Adaptive <code>+0.05 В</code>. В простое CPU получает <code>0.85 В</code> (экономия и меньше тепла), под нагрузкой — до <code>1.35 В</code>, что даёт стабильный буст.
+                </div>
+            </div>
+
+            <!-- Fan Stop / Zero RPM -->
+            <div class="smart-card">
+                <div class="smart-head">
+                    <div class="thumb">
+                        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="50" cy="50" r="28" fill="#0e1624" stroke="#7a5aaf" stroke-width="2"/>
+                            <g stroke="#bb9af7" stroke-width="3" fill="none" stroke-linecap="round">
+                                <path d="M50 50 L50 30"/><path d="M50 50 L64 58"/><path d="M50 50 L36 58"/>
+                            </g>
+                            <path d="M28 72 L72 28" stroke="#ff6b6b" stroke-width="3"/>
+                            <text x="50" y="94" font-size="8" fill="#aac4ff" text-anchor="middle" font-family="Arial">ZERO RPM</text>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="subtitle">Zero RPM / Fan Stop</div>
+                        <div class="title">Полная остановка вентиляторов</div>
+                    </div>
+                </div>
+                <p>Пока температура ниже порога, плата полностью отключает вентиляторы. В простое, просмотре видео и лёгких задачах ПК работает бесшумно.</p>
+                <div class="example">
+                    <strong>Пример:</strong> порог задан <code>55°C</code>. Смотрим YouTube — CPU 48°C, вентиляторы стоят. Запускаем игру — температура переваливает за 55°C, кулеры плавно раскручиваются.
+                </div>
+            </div>
+
+            <!-- Memory Try It -->
+            <div class="smart-card">
+                <div class="smart-head">
+                    <div class="thumb">
+                        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="10" y="38" width="80" height="24" rx="4" fill="#1c2a42" stroke="#7a5aaf" stroke-width="2"/>
+                            <g fill="#bb9af7"><rect x="18" y="46" width="8" height="8"/><rect x="32" y="46" width="8" height="8"/><rect x="46" y="46" width="8" height="8"/><rect x="60" y="46" width="8" height="8"/><rect x="74" y="46" width="8" height="8"/></g>
+                            <path d="M30 24 l10 10 l-10 10" stroke="#ffd966" stroke-width="2.5" fill="none"/>
+                            <text x="50" y="84" font-size="8" fill="#aac4ff" text-anchor="middle" font-family="Arial">TRY IT</text>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="subtitle">Memory Try It! / Auto OC</div>
+                        <div class="title">Автоподбор частоты RAM</div>
+                    </div>
+                </div>
+                <p>Если модуль нестабилен на XMP-частоте, плата предлагает список «безопасных» комбинаций частоты и таймингов и сама тестирует их при загрузке.</p>
+                <div class="example">
+                    <strong>Пример:</strong> DDR5-6400 не завелась на профиле EXPO. Memory Try It! предлагает <code>6200 CL32</code> и <code>6000 CL30</code>. Выбираем 6000 CL30 — система стабильно проходит тест и грузится без ошибок.
+                </div>
+            </div>
+
+            <!-- BIOS Flashback -->
+            <div class="smart-card">
+                <div class="smart-head">
+                    <div class="thumb">
+                        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="16" y="20" width="68" height="50" rx="4" fill="#0e1624" stroke="#7a5aaf" stroke-width="2"/>
+                            <g stroke="#3d5a8a" stroke-width="1.5"><path d="M24 20 v-6 M34 20 v-6 M44 20 v-6 M54 20 v-6 M64 20 v-6 M74 20 v-6"/></g>
+                            <path d="M30 40 h20 M30 50 h30" stroke="#bb9af7" stroke-width="2"/>
+                            <path d="M60 44 l8 8 -8 8" stroke="#ffd966" stroke-width="2.5" fill="none"/>
+                            <text x="50" y="84" font-size="8" fill="#aac4ff" text-anchor="middle" font-family="Arial">FLASHBACK</text>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="subtitle">BIOS Flashback</div>
+                        <div class="title">Прошивка BIOS без CPU</div>
+                    </div>
+                </div>
+                <p>Отдельный контроллер на плате позволяет прошить BIOS с USB-флешки, даже если процессор не установлен или не поддерживается текущей версией прошивки.</p>
+                <div class="example">
+                    <strong>Пример:</strong> купили Ryzen 9000, а плата вышла до его релиза и не стартует. Кладём прошивку на флешку, нажимаем кнопку Flashback — плата сама прошивает BIOS и после перезагрузки видит новый CPU.
+                </div>
+            </div>
+
+            <!-- Smart Fan Curve -->
+            <div class="smart-card">
+                <div class="smart-head">
+                    <div class="thumb">
+                        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M14 80 L34 60 L54 66 L84 24" stroke="#bb9af7" stroke-width="3" fill="none"/>
+                            <circle cx="14" cy="80" r="3" fill="#7aa2f7"/><circle cx="34" cy="60" r="3" fill="#7aa2f7"/><circle cx="54" cy="66" r="3" fill="#7aa2f7"/><circle cx="84" cy="24" r="3" fill="#ffd966"/>
+                            <text x="50" y="94" font-size="8" fill="#aac4ff" text-anchor="middle" font-family="Arial">CURVE</text>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="subtitle">Smart Fan Curve Editor</div>
+                        <div class="title">Графический редактор кривой</div>
+                    </div>
+                </div>
+                <p>В UEFI можно мышкой перетаскивать точки на графике «температура → обороты». Плата сохраняет кривую в профиль и применяет её к конкретному разъёму.</p>
+                <div class="example">
+                    <strong>Пример:</strong> строим кривую <code>40°C → 25%</code>, <code>60°C → 50%</code>, <code>75°C → 80%</code>, <code>85°C → 100%</code>. Указываем её для <code>CPU_FAN</code>, а для <code>SYS_FAN</code> ставим более пологую — корпусные вентиляторы не будут «взвывать» при коротких пиках.
+                </div>
+            </div>
+        </div>
+
+        <div class="note" style="margin-top: 1.5rem;">
+            💡 <strong>Как это работает в связке:</strong> современная плата одновременно применяет несколько smart-технологий. Например, в играх: XMP/EXPO держит память на 6000 МГц, PBO разгоняет CPU, Smart Fan крутит кулеры по кривой, а Curve Optimizer снижает напряжение — в итоге вы получаете максимум FPS при приемлемом шуме и температуре. В простое: Zero RPM останавливает вентиляторы, Adaptive Voltage роняет напряжение CPU, и ПК становится почти бесшумным.
+        </div>
+    </div>
+
+    <footer>
+        Материнская плата — это не просто «подставка» для железа, а активный участник обмена данными. Понимание её компонентов и ограничений помогает собрать стабильный и сбалансированный ПК.
+    </footer>
+</div>
+</body>
+</html>
